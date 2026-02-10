@@ -1,7 +1,5 @@
 package com.valeop.appointments_api.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +21,6 @@ public class Role {
     public Role() {
     }
 
-    @Autowired
     public Role(Integer roleId, String roleName) {
         this.roleId = roleId;
         this.roleName = roleName;
