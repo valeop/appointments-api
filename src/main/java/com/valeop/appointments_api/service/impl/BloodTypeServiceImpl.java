@@ -17,6 +17,7 @@ import com.valeop.appointments_api.service.BloodTypeService;
 @Service
 public class BloodTypeServiceImpl implements BloodTypeService {
     private final BloodTypeRepository bloodTypeRepository;
+    static final String MESSAGE = "BloodType not found with ID #";
 
     @Autowired
     public BloodTypeServiceImpl(BloodTypeRepository bloodTypeRepository) {
@@ -32,7 +33,7 @@ public class BloodTypeServiceImpl implements BloodTypeService {
     @Override
     public BloodTypeDTO getBloodTypeById(Integer bloodTypeId) {
         BloodType bloodTypeFound = bloodTypeRepository.findByBloodTypeId(bloodTypeId)
-                .orElseThrow(() -> new ResourceNotFoundException("BloodType not found with ID #" + bloodTypeId));
+                .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + bloodTypeId));
 
         return BloodTypeMapper.toDTO(bloodTypeFound);
     }
@@ -50,7 +51,7 @@ public class BloodTypeServiceImpl implements BloodTypeService {
     @Override
     public BloodTypeDTO updateBloodType(BloodTypeDTO bloodTypeDTO, Integer bloodTypeId) {
         BloodType bloodTypeFound = bloodTypeRepository.findByBloodTypeId(bloodTypeId)
-                .orElseThrow(() -> new ResourceNotFoundException("BloodType not found with ID #" + bloodTypeId));
+                .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + bloodTypeId));
         bloodTypeFound.setBloodTypeName(bloodTypeDTO.getBloodTypeName());
         bloodTypeRepository.save(bloodTypeFound);
         return BloodTypeMapper.toDTO(bloodTypeFound);
@@ -59,7 +60,7 @@ public class BloodTypeServiceImpl implements BloodTypeService {
     @Override
     public BloodTypeDTO deleteBloodType(Integer bloodTypeId) {
         BloodType bloodTypeFound = bloodTypeRepository.findByBloodTypeId(bloodTypeId)
-                .orElseThrow(() -> new ResourceNotFoundException("BloodType not found woth ID #" + bloodTypeId));
+                .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + bloodTypeId));
         bloodTypeRepository.deleteById(bloodTypeId);
         return BloodTypeMapper.toDTO(bloodTypeFound);
     }
