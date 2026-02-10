@@ -42,7 +42,8 @@ public class GenderServiceImpl implements GenderService {
     public GenderDTO createGender(GenderDTO genderDTO) {
         Gender gender = GenderMapper.toGender(genderDTO);
         Gender genderSaved = Optional.of(gender)
-                .filter(g -> !g.getGenderName().isBlank()).map(genderRepository::save)
+                .filter(g -> !g.getGenderName().isBlank())
+                .map(genderRepository::save)
                 .orElseThrow(() -> new BadRequestException("Name should not be empty."));
         return GenderMapper.toDTO(genderSaved);
     }
