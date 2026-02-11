@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.valeop.appointments_api.dto.PersonDTO;
+import com.valeop.appointments_api.dto.person.CreatePersonDTO;
+import com.valeop.appointments_api.dto.person.PersonResponseDTO;
+import com.valeop.appointments_api.dto.person.UpdatePersonDTO;
 import com.valeop.appointments_api.service.impl.PersonServiceImpl;
 
 import jakarta.validation.Valid;
@@ -38,40 +40,41 @@ public class PersonController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<PersonDTO>> getList() {
-        List<PersonDTO> personsList = personServiceImpl.getPersonList();
+    public ResponseEntity<List<PersonResponseDTO>> getList() {
+        List<PersonResponseDTO> personsList = personServiceImpl.getPersonList();
         return ResponseEntity.status(HttpStatus.OK).body(personsList);
     }
 
     @GetMapping(value = "/list", params = "id")
-    public ResponseEntity<PersonDTO> getPersonById(@RequestParam(value = "id") Integer personId) {
-        PersonDTO personExisting = personServiceImpl.getPersonById(personId);
+    public ResponseEntity<PersonResponseDTO> getPersonById(@RequestParam(value = "id") Integer personId) {
+        PersonResponseDTO personExisting = personServiceImpl.getPersonById(personId);
         return ResponseEntity.status(HttpStatus.OK).body(personExisting);
     }
 
     @GetMapping(value = "/list", params = "id-card")
-    public ResponseEntity<PersonDTO> getPersonByIdentityCard(@RequestParam(value = "id-card") String identityCard) {
-        PersonDTO personExisting = personServiceImpl.getPersonByIdentityCard(identityCard);
+    public ResponseEntity<PersonResponseDTO> getPersonByIdentityCard(
+            @RequestParam(value = "id-card") String identityCard) {
+        PersonResponseDTO personExisting = personServiceImpl.getPersonByIdentityCard(identityCard);
         return new ResponseEntity<>(personExisting, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<PersonDTO> createPerson(@Valid @RequestBody PersonDTO person) {
-        PersonDTO newPerson = personServiceImpl.createPerson(person, person.getGender().getGenderId(),
-                person.getBloodType().getBloodTypeId());
+    public ResponseEntity<PersonResponseDTO> createPerson(@Valid @RequestBody CreatePersonDTO person) {
+        PersonResponseDTO newPerson = personServiceImpl.createPerson(person, person.gender().getGenderId(),
+                person.bloodType().getBloodTypeId());
         return ResponseEntity.status(HttpStatus.CREATED).body(newPerson);
     }
 
     @PutMapping("/update/{personId}")
-    public ResponseEntity<PersonDTO> updatePerson(@Valid @RequestBody PersonDTO person,
+    public ResponseEntity<PersonResponseDTO> updatePerson(@Valid @RequestBody UpdatePersonDTO person,
             @PathVariable Integer personId) {
-        PersonDTO personBBDD = personServiceImpl.updatePerson(person, personId);
+        PersonResponseDTO personBBDD = personServiceImpl.updatePerson(person, personId);
         return ResponseEntity.ok(personBBDD);
     }
 
     @DeleteMapping("/delete/{personId}")
-    public ResponseEntity<PersonDTO> deletePerson(@PathVariable Integer personId) {
-        PersonDTO personDeleted = personServiceImpl.deletePerson(personId);
+    public ResponseEntity<PersonResponseDTO> deletePerson(@PathVariable Integer personId) {
+        PersonResponseDTO personDeleted = personServiceImpl.deletePerson(personId);
         return ResponseEntity.ok(personDeleted);
     }
 }
