@@ -6,8 +6,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.valeop.appointments_api.dto.GenderDTO;
 import com.valeop.appointments_api.exceptions.ResourceNotFoundException;
+import com.valeop.appointments_api.dto.gender.CreateGenderDTO;
+import com.valeop.appointments_api.dto.gender.GenderResponseDTO;
+import com.valeop.appointments_api.dto.gender.UpdateGenderDTO;
 import com.valeop.appointments_api.exceptions.BadRequestException;
 import com.valeop.appointments_api.mapper.GenderMapper;
 import com.valeop.appointments_api.model.Gender;
@@ -25,47 +27,46 @@ public class GenderServiceImpl implements GenderService {
     }
 
     @Override
-    public List<GenderDTO> getListGenders() {
+    public List<GenderResponseDTO> getListGenders() {
         List<Gender> genderList = genderRepository.findAll();
-        return genderList.stream().map(GenderMapper::toDTO).toList();
+        return genderList.stream().map(GenderMapper::toResponseDTO).toList();
     }
 
     @Override
-    public GenderDTO getGenderById(Integer genderId) {
+    public GenderResponseDTO getGenderById(Integer genderId) {
         Gender genderFound = genderRepository.findByGenderId(genderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Gender does not exist with ID #" + genderId));
 
-        return GenderMapper.toDTO(genderFound);
+        return GenderMapper.toResponseDTO(genderFound);
     }
 
     @Override
-    public GenderDTO createGender(GenderDTO genderDTO) {
-        Gender gender = GenderMapper.toGender(genderDTO);
+    public GenderResponseDTO createGender(CreateGenderDTO genderDTO) {
+        Gender gender = GenderMapper.fromCreateGenderDTO(genderDTO);
         Gender genderSaved = Optional.of(gender)
                 .filter(g -> !g.getGenderName().isBlank())
                 .map(genderRepository::save)
                 .orElseThrow(() -> new BadRequestException("Name should not be empty."));
-        return GenderMapper.toDTO(genderSaved);
+        return GenderMapper.toResponseDTO(genderSaved);
     }
 
     @Override
-    public GenderDTO updateGender(GenderDTO genderDTO, Integer genderId) {
+    public GenderResponseDTO updateGender(UpdateGenderDTO genderDTO, Integer genderId) {
         Gender genderFound = genderRepository.findByGenderId(genderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Gender was not found with ID #" + genderId));
 
-        Gender genderUpdated = GenderMapper.toGender(genderDTO);
-        genderFound.setGenderName(genderUpdated.getGenderName());
+        GenderMapper.updateFromDTO(genderDTO, genderFound);
         genderRepository.save(genderFound);
 
-        return GenderMapper.toDTO(genderFound);
+        return GenderMapper.toResponseDTO(genderFound);
     }
 
     @Override
-    public GenderDTO deleteGender(Integer genderId) {
+    public GenderResponseDTO deleteGender(Integer genderId) {
 
         Gender genderFound = genderRepository.findByGenderId(genderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Gender was not found with ID #" + genderId));
         genderRepository.deleteById(genderId);
-        return GenderMapper.toDTO(genderFound);
+        return GenderMapper.toResponseDTO(genderFound);
     }
 }
