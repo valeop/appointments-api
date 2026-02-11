@@ -14,7 +14,7 @@ public class RoleDTO {
     }
 
     public RoleDTO(Integer roleId,
-            @NotBlank(message = "Role name should not be empty.") @Size(max = 20, min = 2, message = "Role name characters limit exceeded. (20)") String roleName) {
+            @NotBlank(message = "Role name should not be empty.") @Size(max = 20, message = "Role name characters limit exceeded. (20)") String roleName) {
         this.roleId = roleId;
         this.roleName = roleName;
     }
