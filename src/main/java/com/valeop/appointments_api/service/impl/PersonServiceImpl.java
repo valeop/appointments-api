@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.valeop.appointments_api.dto.PersonDTO;
+import com.valeop.appointments_api.dto.person.CreatePersonDTO;
+import com.valeop.appointments_api.dto.person.PersonResponseDTO;
+import com.valeop.appointments_api.dto.person.UpdatePersonDTO;
 import com.valeop.appointments_api.exceptions.ResourceNotFoundException;
 import com.valeop.appointments_api.mapper.PersonMapper;
 import com.valeop.appointments_api.model.BloodType;
@@ -33,30 +35,30 @@ public class PersonServiceImpl implements PersonService {
         }
 
         @Override
-        public List<PersonDTO> getPersonList() {
+        public List<PersonResponseDTO> getPersonList() {
                 List<Person> personList = personRepository.findAll().stream()
                                 .toList();
 
-                return personList.stream().map(PersonMapper::toDTO).toList();
+                return personList.stream().map(PersonMapper::toResponseDTO).toList();
         }
 
         @Override
-        public PersonDTO getPersonById(Integer personId) {
+        public PersonResponseDTO getPersonById(Integer personId) {
                 Person personFound = personRepository.findById(personId)
                                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + personId));
 
-                return PersonMapper.toDTO(personFound);
+                return PersonMapper.toResponseDTO(personFound);
         }
 
         @Override
-        public PersonDTO getPersonByIdentityCard(String identityCard) {
+        public PersonResponseDTO getPersonByIdentityCard(String identityCard) {
                 Person personFound = personRepository.findByIdentityCard(identityCard)
                                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + identityCard));
-                return PersonMapper.toDTO(personFound);
+                return PersonMapper.toResponseDTO(personFound);
         }
 
         @Override
-        public PersonDTO createPerson(PersonDTO personDTO, Integer genderId, Integer bloodTypeId) {
+        public PersonResponseDTO createPerson(CreatePersonDTO personDTO, Integer genderId, Integer bloodTypeId) {
                 Gender genderFound = genderRepository.findByGenderId(genderId)
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "Gender does not exist with ID #" + genderId));
@@ -65,47 +67,48 @@ public class PersonServiceImpl implements PersonService {
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "BloodType does not exist with ID #" + bloodTypeId));
 
-                Person newPerson = PersonMapper.toEntity(personDTO);
+                Person newPerson = PersonMapper.fromCreatePersonDTO(personDTO, genderFound, bloodTypeFound);
 
                 newPerson.setGender(genderFound);
                 newPerson.setBloodType(bloodTypeFound);
 
                 Person personSaved = personRepository.save(newPerson);
 
-                return PersonMapper.toDTO(personSaved);
+                return PersonMapper.toResponseDTO(personSaved);
         }
 
         @Override
-        public PersonDTO updatePerson(PersonDTO personDTO, Integer personId) {
+        public PersonResponseDTO updatePerson(UpdatePersonDTO personDTO, Integer personId) {
                 Person personFound = personRepository.findByPersonId(personId)
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "Person with ID #" + personId + MESSAGE));
 
-                Gender genderFound = genderRepository.findByGenderId(personDTO.getGender().getGenderId())
-                                .orElseThrow(() -> new ResourceNotFoundException("Gender does not exist."));
+                if (personDTO.gender() != null) {
+                        Gender genderFound = genderRepository.findByGenderId(personDTO.gender().getGenderId())
+                                        .orElseThrow(() -> new ResourceNotFoundException("Gender does not exist."));
+                        personFound.setGender(genderFound);
+                }
 
-                BloodType bloodTypeFound = bloodTypeRepository
-                                .findByBloodTypeId(personDTO.getBloodType().getBloodTypeId())
-                                .orElseThrow(() -> new ResourceNotFoundException("Blood Type does not exist."));
+                if (personDTO.bloodType() != null) {
+                        BloodType bloodTypeFound = bloodTypeRepository
+                                        .findByBloodTypeId(personDTO.bloodType().getBloodTypeId())
+                                        .orElseThrow(() -> new ResourceNotFoundException("Blood Type does not exist."));
+                        personFound.setBloodType(bloodTypeFound);
+                }
 
-                personFound.setIdentityCard(personDTO.getIdentityCard());
-                personFound.setFirstName(personDTO.getFirstName());
-                personFound.setLastName(personDTO.getLastName());
-                personFound.setBirthDate(personDTO.getBirthDate());
-                personFound.setGender(genderFound);
-                personFound.setBloodType(bloodTypeFound);
+                PersonMapper.updateFromDTO(personDTO, personFound);
 
                 Person personSaved = personRepository.save(personFound);
-                return PersonMapper.toDTO(personSaved);
+                return PersonMapper.toResponseDTO(personSaved);
         }
 
         @Override
-        public PersonDTO deletePerson(Integer personId) {
+        public PersonResponseDTO deletePerson(Integer personId) {
                 Person personFound = personRepository.findByPersonId(personId)
                                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + personId));
 
                 personRepository.delete(personFound);
-                return PersonMapper.toDTO(personFound);
+                return PersonMapper.toResponseDTO(personFound);
         }
 
 }
