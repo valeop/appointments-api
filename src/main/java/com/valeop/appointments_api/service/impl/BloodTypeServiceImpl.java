@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.valeop.appointments_api.dto.BloodTypeDTO;
+import com.valeop.appointments_api.dto.bloodtype.BloodTypeResponseDTO;
+import com.valeop.appointments_api.dto.bloodtype.CreateBloodTypeDTO;
+import com.valeop.appointments_api.dto.bloodtype.UpdateBloodTypeDTO;
 import com.valeop.appointments_api.exceptions.BadRequestException;
 import com.valeop.appointments_api.exceptions.ResourceNotFoundException;
 import com.valeop.appointments_api.mapper.BloodTypeMapper;
@@ -25,43 +27,43 @@ public class BloodTypeServiceImpl implements BloodTypeService {
     }
 
     @Override
-    public List<BloodTypeDTO> getListBloodType() {
+    public List<BloodTypeResponseDTO> getListBloodType() {
         List<BloodType> bloodTypeList = bloodTypeRepository.findAll();
-        return bloodTypeList.stream().map(BloodTypeMapper::toDTO).toList();
+        return bloodTypeList.stream().map(BloodTypeMapper::toResponseDTO).toList();
     }
 
     @Override
-    public BloodTypeDTO getBloodTypeById(Integer bloodTypeId) {
+    public BloodTypeResponseDTO getBloodTypeById(Integer bloodTypeId) {
         BloodType bloodTypeFound = bloodTypeRepository.findByBloodTypeId(bloodTypeId)
                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + bloodTypeId));
 
-        return BloodTypeMapper.toDTO(bloodTypeFound);
+        return BloodTypeMapper.toResponseDTO(bloodTypeFound);
     }
 
     @Override
-    public BloodTypeDTO createBloodType(BloodTypeDTO bloodTypeDTO) {
-        BloodType bloodType = BloodTypeMapper.toEntity(bloodTypeDTO);
+    public BloodTypeResponseDTO createBloodType(CreateBloodTypeDTO bloodTypeDTO) {
+        BloodType bloodType = BloodTypeMapper.fromCreateBloodTypeDTO(bloodTypeDTO);
         BloodType bloodTypeSaved = Optional.of(bloodType)
                 .filter(b -> !b.getBloodTypeName().isBlank())
                 .map(bloodTypeRepository::save)
                 .orElseThrow(() -> new BadRequestException("BloodTypeName shouldn't be empty."));
-        return BloodTypeMapper.toDTO(bloodTypeSaved);
+        return BloodTypeMapper.toResponseDTO(bloodTypeSaved);
     }
 
     @Override
-    public BloodTypeDTO updateBloodType(BloodTypeDTO bloodTypeDTO, Integer bloodTypeId) {
+    public BloodTypeResponseDTO updateBloodType(UpdateBloodTypeDTO bloodTypeDTO, Integer bloodTypeId) {
         BloodType bloodTypeFound = bloodTypeRepository.findByBloodTypeId(bloodTypeId)
                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + bloodTypeId));
-        bloodTypeFound.setBloodTypeName(bloodTypeDTO.getBloodTypeName());
+        BloodTypeMapper.updateFromDTO(bloodTypeDTO, bloodTypeFound);
         bloodTypeRepository.save(bloodTypeFound);
-        return BloodTypeMapper.toDTO(bloodTypeFound);
+        return BloodTypeMapper.toResponseDTO(bloodTypeFound);
     }
 
     @Override
-    public BloodTypeDTO deleteBloodType(Integer bloodTypeId) {
+    public BloodTypeResponseDTO deleteBloodType(Integer bloodTypeId) {
         BloodType bloodTypeFound = bloodTypeRepository.findByBloodTypeId(bloodTypeId)
                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + bloodTypeId));
         bloodTypeRepository.deleteById(bloodTypeId);
-        return BloodTypeMapper.toDTO(bloodTypeFound);
+        return BloodTypeMapper.toResponseDTO(bloodTypeFound);
     }
 }
