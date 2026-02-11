@@ -4,19 +4,21 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.valeop.appointments_api.dto.GenderDTO;
+import com.valeop.appointments_api.dto.gender.CreateGenderDTO;
+import com.valeop.appointments_api.dto.gender.GenderResponseDTO;
+import com.valeop.appointments_api.dto.gender.UpdateGenderDTO;
 
 @Service
 public interface GenderService {
 
-    List<GenderDTO> getListGenders();
+    List<GenderResponseDTO> getListGenders();
 
-    GenderDTO getGenderById(Integer genderId);
+    GenderResponseDTO getGenderById(Integer genderId);
 
-    GenderDTO createGender(GenderDTO genderDTO);
+    GenderResponseDTO createGender(CreateGenderDTO genderDTO);
 
-    GenderDTO updateGender(GenderDTO genderDTO, Integer genderId);
+    GenderResponseDTO updateGender(UpdateGenderDTO genderDTO, Integer genderId);
 
-    GenderDTO deleteGender(Integer genderId);
+    GenderResponseDTO deleteGender(Integer genderId);
 
 }
