@@ -4,17 +4,19 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.valeop.appointments_api.dto.BloodTypeDTO;
+import com.valeop.appointments_api.dto.bloodtype.BloodTypeResponseDTO;
+import com.valeop.appointments_api.dto.bloodtype.CreateBloodTypeDTO;
+import com.valeop.appointments_api.dto.bloodtype.UpdateBloodTypeDTO;
 
 @Service
 public interface BloodTypeService {
-    List<BloodTypeDTO> getListBloodType();
+    List<BloodTypeResponseDTO> getListBloodType();
 
-    BloodTypeDTO getBloodTypeById(Integer bloodTypeId);
+    BloodTypeResponseDTO getBloodTypeById(Integer bloodTypeId);
 
-    BloodTypeDTO createBloodType(BloodTypeDTO bloodTypeDTO);
+    BloodTypeResponseDTO createBloodType(CreateBloodTypeDTO bloodTypeDTO);
 
-    BloodTypeDTO updateBloodType(BloodTypeDTO bloodTypeDTO, Integer bloodTypeId);
+    BloodTypeResponseDTO updateBloodType(UpdateBloodTypeDTO bloodTypeDTO, Integer bloodTypeId);
 
-    BloodTypeDTO deleteBloodType(Integer bloodTypeId);
+    BloodTypeResponseDTO deleteBloodType(Integer bloodTypeId);
 }
