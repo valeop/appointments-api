@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.valeop.appointments_api.dto.GenderDTO;
+import com.valeop.appointments_api.dto.gender.CreateGenderDTO;
+import com.valeop.appointments_api.dto.gender.GenderResponseDTO;
+import com.valeop.appointments_api.dto.gender.UpdateGenderDTO;
 import com.valeop.appointments_api.service.impl.GenderServiceImpl;
 
 import jakarta.validation.Valid;
@@ -36,34 +38,34 @@ public class GenderController {
     }
 
     @GetMapping("/all")
-    ResponseEntity<List<GenderDTO>> getAllGenders() {
-        List<GenderDTO> resultList = genderServiceImpl.getListGenders();
+    ResponseEntity<List<GenderResponseDTO>> getAllGenders() {
+        List<GenderResponseDTO> resultList = genderServiceImpl.getListGenders();
         return ResponseEntity.status(HttpStatus.OK).body(resultList);
     }
 
     @GetMapping(value = "/all", params = "id")
-    ResponseEntity<GenderDTO> getGenderById(@RequestParam(value = "id") Integer genderId) {
-        GenderDTO genderFound = genderServiceImpl.getGenderById(genderId);
+    ResponseEntity<GenderResponseDTO> getGenderById(@RequestParam(value = "id") Integer genderId) {
+        GenderResponseDTO genderFound = genderServiceImpl.getGenderById(genderId);
         return ResponseEntity.status(HttpStatus.OK).body(genderFound);
     }
 
     @PostMapping("/create")
-    ResponseEntity<GenderDTO> createGender(@Valid @RequestBody GenderDTO genderDTO) {
-        GenderDTO genderSaved = genderServiceImpl.createGender(genderDTO);
+    ResponseEntity<GenderResponseDTO> createGender(@Valid @RequestBody CreateGenderDTO genderDTO) {
+        GenderResponseDTO genderSaved = genderServiceImpl.createGender(genderDTO);
         return ResponseEntity.ok(genderSaved);
     }
 
     @PutMapping(value = "/update", params = "id")
-    ResponseEntity<GenderDTO> updateGender(@Valid @RequestBody GenderDTO genderDTO,
+    ResponseEntity<GenderResponseDTO> updateGender(@Valid @RequestBody UpdateGenderDTO genderDTO,
             @RequestParam(value = "id") Integer genderId) {
-        GenderDTO genderSaved = genderServiceImpl.updateGender(genderDTO, genderId);
+        GenderResponseDTO genderSaved = genderServiceImpl.updateGender(genderDTO, genderId);
 
         return ResponseEntity.status(HttpStatus.OK).body(genderSaved);
     }
 
     @DeleteMapping("/delete/{genderId}")
-    ResponseEntity<GenderDTO> deleteGender(@PathVariable Integer genderId) {
-        GenderDTO genderDeleted = genderServiceImpl.deleteGender(genderId);
+    ResponseEntity<GenderResponseDTO> deleteGender(@PathVariable Integer genderId) {
+        GenderResponseDTO genderDeleted = genderServiceImpl.deleteGender(genderId);
         return ResponseEntity.ok(genderDeleted);
     }
 }
