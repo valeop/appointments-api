@@ -4,19 +4,21 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.valeop.appointments_api.dto.PersonDTO;
+import com.valeop.appointments_api.dto.person.CreatePersonDTO;
+import com.valeop.appointments_api.dto.person.PersonResponseDTO;
+import com.valeop.appointments_api.dto.person.UpdatePersonDTO;
 
 @Service
 public interface PersonService {
-    List<PersonDTO> getPersonList();
+    List<PersonResponseDTO> getPersonList();
 
-    PersonDTO getPersonById(Integer personId);
+    PersonResponseDTO getPersonById(Integer personId);
 
-    PersonDTO getPersonByIdentityCard(String identityCard);
+    PersonResponseDTO getPersonByIdentityCard(String identityCard);
 
-    PersonDTO createPerson(PersonDTO personDTO, Integer genderId, Integer bloodTypeId);
+    PersonResponseDTO createPerson(CreatePersonDTO personDTO, Integer genderId, Integer bloodTypeId);
 
-    PersonDTO updatePerson(PersonDTO personDTO, Integer personId);
+    PersonResponseDTO updatePerson(UpdatePersonDTO personDTO, Integer personId);
 
-    PersonDTO deletePerson(Integer personId);
+    PersonResponseDTO deletePerson(Integer personId);
 }
