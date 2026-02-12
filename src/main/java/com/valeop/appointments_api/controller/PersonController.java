@@ -60,8 +60,7 @@ public class PersonController {
 
     @PostMapping("/create")
     public ResponseEntity<PersonResponseDTO> createPerson(@Valid @RequestBody CreatePersonDTO person) {
-        PersonResponseDTO newPerson = personServiceImpl.createPerson(person, person.gender().getGenderId(),
-                person.bloodType().getBloodTypeId());
+        PersonResponseDTO newPerson = personServiceImpl.createPerson(person);
         return ResponseEntity.status(HttpStatus.CREATED).body(newPerson);
     }
 
