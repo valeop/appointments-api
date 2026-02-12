@@ -2,7 +2,6 @@ package com.valeop.appointments_api.mapper;
 
 import org.springframework.stereotype.Component;
 
-import com.valeop.appointments_api.dto.bloodtype.UpdateBloodTypeDTO;
 import com.valeop.appointments_api.dto.role.CreateRoleDTO;
 import com.valeop.appointments_api.dto.role.RoleResponseDTO;
 import com.valeop.appointments_api.dto.role.UpdateRoleDTO;
