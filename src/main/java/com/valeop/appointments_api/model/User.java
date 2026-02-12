@@ -1,7 +1,5 @@
 package com.valeop.appointments_api.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,7 +34,6 @@ public class User {
     public User() {
     }
 
-    @Autowired
     public User(Integer userId, Person person, Role role, String email, String passwordHash) {
         this.userId = userId;
         this.person = person;
