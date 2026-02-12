@@ -16,7 +16,7 @@ public interface PersonService {
 
     PersonResponseDTO getPersonByIdentityCard(String identityCard);
 
-    PersonResponseDTO createPerson(CreatePersonDTO personDTO, Integer genderId, Integer bloodTypeId);
+    PersonResponseDTO createPerson(CreatePersonDTO personDTO);
 
     PersonResponseDTO updatePerson(UpdatePersonDTO personDTO, Integer personId);
 
