@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.valeop.appointments_api.dto.RoleDTO;
+import com.valeop.appointments_api.dto.role.CreateRoleDTO;
+import com.valeop.appointments_api.dto.role.RoleResponseDTO;
+import com.valeop.appointments_api.dto.role.UpdateRoleDTO;
 import com.valeop.appointments_api.exceptions.BadRequestException;
 import com.valeop.appointments_api.exceptions.ResourceNotFoundException;
 import com.valeop.appointments_api.mapper.RoleMapper;
@@ -25,43 +27,43 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<RoleDTO> getRoleList() {
+    public List<RoleResponseDTO> getRoleList() {
         List<Role> roleList = roleRepository.findAll();
-        return roleList.stream().map(RoleMapper::toDTO).toList();
+        return roleList.stream().map(RoleMapper::toResponseDTO).toList();
     }
 
     @Override
-    public RoleDTO getRoleById(Integer roleId) {
+    public RoleResponseDTO getRoleById(Integer roleId) {
         Role roleFound = roleRepository.findByRoleId(roleId)
                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + roleId));
 
-        return RoleMapper.toDTO(roleFound);
+        return RoleMapper.toResponseDTO(roleFound);
     }
 
     @Override
-    public RoleDTO createRole(RoleDTO roleDTO) {
-        Role role = RoleMapper.toEntity(roleDTO);
+    public RoleResponseDTO createRole(CreateRoleDTO roleDTO) {
+        Role role = RoleMapper.fromCreateRoleDTO(roleDTO);
         return Optional.of(role).filter(r -> !r.getRoleName().isBlank())
                 .map(roleRepository::save)
-                .map(RoleMapper::toDTO)
+                .map(RoleMapper::toResponseDTO)
                 .orElseThrow(() -> new BadRequestException("RoleName should not be empty."));
     }
 
     @Override
-    public RoleDTO updateRole(RoleDTO roleDTO, Integer roleId) {
-        Role role = roleRepository.findByRoleId(roleId)
+    public RoleResponseDTO updateRole(UpdateRoleDTO roleDTO, Integer roleId) {
+        Role roleFound = roleRepository.findByRoleId(roleId)
                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + roleId));
-        role.setRoleName(roleDTO.getRoleName());
-        roleRepository.save(role);
+        RoleMapper.updateFromDTO(roleDTO, roleFound);
+        roleRepository.save(roleFound);
 
-        return RoleMapper.toDTO(role);
+        return RoleMapper.toResponseDTO(roleFound);
     }
 
     @Override
-    public RoleDTO deleteRole(Integer roleId) {
+    public RoleResponseDTO deleteRole(Integer roleId) {
         Role roleFound = roleRepository.findByRoleId(roleId)
                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + roleId));
         roleRepository.deleteById(roleId);
-        return RoleMapper.toDTO(roleFound);
+        return RoleMapper.toResponseDTO(roleFound);
     }
 }
