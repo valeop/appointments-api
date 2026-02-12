@@ -4,18 +4,20 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.valeop.appointments_api.dto.RoleDTO;
+import com.valeop.appointments_api.dto.role.CreateRoleDTO;
+import com.valeop.appointments_api.dto.role.RoleResponseDTO;
+import com.valeop.appointments_api.dto.role.UpdateRoleDTO;
 
 @Service
 public interface RoleService {
 
-    public List<RoleDTO> getRoleList();
+    public List<RoleResponseDTO> getRoleList();
 
-    public RoleDTO getRoleById(Integer roleId);
+    public RoleResponseDTO getRoleById(Integer roleId);
 
-    public RoleDTO createRole(RoleDTO roleDTO);
+    public RoleResponseDTO createRole(CreateRoleDTO roleDTO);
 
-    public RoleDTO updateRole(RoleDTO roleDTO, Integer roleId);
+    public RoleResponseDTO updateRole(UpdateRoleDTO roleDTO, Integer roleId);
 
-    public RoleDTO deleteRole(Integer roleId);
+    public RoleResponseDTO deleteRole(Integer roleId);
 }
