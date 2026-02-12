@@ -58,23 +58,18 @@ public class PersonServiceImpl implements PersonService {
         }
 
         @Override
-        public PersonResponseDTO createPerson(CreatePersonDTO personDTO, Integer genderId, Integer bloodTypeId) {
-                Gender genderFound = genderRepository.findByGenderId(genderId)
+        public PersonResponseDTO createPerson(CreatePersonDTO personDTO) {
+                Gender genderFound = genderRepository.findByGenderId(personDTO.gender().getGenderId())
                                 .orElseThrow(() -> new ResourceNotFoundException(
-                                                "Gender does not exist with ID #" + genderId));
+                                                "Gender does not exist."));
 
-                BloodType bloodTypeFound = bloodTypeRepository.findByBloodTypeId(bloodTypeId)
+                BloodType bloodTypeFound = bloodTypeRepository.findByBloodTypeId(personDTO.bloodType().getBloodTypeId())
                                 .orElseThrow(() -> new ResourceNotFoundException(
-                                                "BloodType does not exist with ID #" + bloodTypeId));
+                                                "BloodType does not exist."));
 
                 Person newPerson = PersonMapper.fromCreatePersonDTO(personDTO, genderFound, bloodTypeFound);
 
-                newPerson.setGender(genderFound);
-                newPerson.setBloodType(bloodTypeFound);
-
-                Person personSaved = personRepository.save(newPerson);
-
-                return PersonMapper.toResponseDTO(personSaved);
+                return PersonMapper.toResponseDTO(personRepository.save(newPerson));
         }
 
         @Override
