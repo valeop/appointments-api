@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.valeop.appointments_api.dto.user.CreateUserDTO;
+import com.valeop.appointments_api.dto.user.UpdatePasswordDTO;
 import com.valeop.appointments_api.dto.user.UpdateUserDTO;
 import com.valeop.appointments_api.dto.user.UserResponseDTO;
 
@@ -17,6 +18,8 @@ public interface UserService {
     UserResponseDTO createUser(CreateUserDTO userDTO);
 
     UserResponseDTO updateUser(UpdateUserDTO userDTO, Integer userId);
+
+    UserResponseDTO updateUserPassword(UpdatePasswordDTO userDTO, Integer userId);
 
     UserResponseDTO deleteUser(Integer userId);
 }
