@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.valeop.appointments_api.dto.user.CreateUserDTO;
+import com.valeop.appointments_api.dto.user.UpdatePasswordDTO;
 import com.valeop.appointments_api.dto.user.UpdateUserDTO;
 import com.valeop.appointments_api.dto.user.UserResponseDTO;
+import com.valeop.appointments_api.exceptions.BadRequestException;
 import com.valeop.appointments_api.exceptions.ResourceNotFoundException;
 import com.valeop.appointments_api.mapper.UserMapper;
 import com.valeop.appointments_api.model.Person;
@@ -64,15 +66,21 @@ public class UserServiceImpl implements UserService {
                 User userFound = userRepository.findByUserId(userId)
                                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + userId));
 
-                if (userDTO.person().getPersonId() != null) {
-                        Person personFound = personRepository.findByPersonId(userDTO.person().getPersonId())
-                                        .orElseThrow(() -> new ResourceNotFoundException("Person does not exist."));
+                if (userDTO.person() != null) {
+                        Integer personId = userDTO.person().getPersonId();
+                        if (!personRepository.existsById(personId)) {
+                                throw new ResourceNotFoundException("Person does not exist with ID #" + userId);
+                        }
+                        Person personFound = personRepository.getReferenceById(userId);
                         userFound.setPerson(personFound);
                 }
 
-                if (userDTO.role().getRoleId() != null) {
-                        Role roleFound = roleRepository.findByRoleId(userDTO.role().getRoleId())
-                                        .orElseThrow(() -> new ResourceNotFoundException("Role does not exist."));
+                if (userDTO.role() != null) {
+                        Integer roleId = userDTO.role().getRoleId();
+                        if (!roleRepository.existsById(roleId)) {
+                                throw new ResourceNotFoundException("Role does not exist with ID #" + roleId);
+                        }
+                        Role roleFound = roleRepository.getReferenceById(roleId);
                         userFound.setRole(roleFound);
                 }
 
@@ -80,6 +88,22 @@ public class UserServiceImpl implements UserService {
 
                 User userSaved = userRepository.save(userFound);
                 return UserMapper.toResponseDTO(userSaved);
+        }
+
+        @Override
+        public UserResponseDTO updateUserPassword(UpdatePasswordDTO userDTO, Integer userId) {
+                User user = userRepository.findByUserId(userId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "User does not exist with ID #" + userId));
+                if (!user.getPasswordHash().matches(userDTO.currentPassword())) {
+                        throw new BadRequestException("Invalid current password");
+                }
+                if (!userDTO.newPassword().equals(userDTO.confirmNewPassword())) {
+                        throw new BadRequestException("New password does not match with password confirmed");
+                }
+                user.setPasswordHash(userDTO.newPassword());
+                userRepository.save(user);
+                return UserMapper.toResponseDTO(user);
         }
 
         @Override
