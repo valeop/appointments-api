@@ -1,7 +1,5 @@
 package com.valeop.appointments_api.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,7 +26,6 @@ public class Doctor {
 
     public Doctor() {}
 
-    @Autowired
     public Doctor(Integer doctorId, User user, Person person) {
         this.doctorId = doctorId;
         this.user = user;
