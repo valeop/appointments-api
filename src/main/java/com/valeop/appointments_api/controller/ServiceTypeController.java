@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import com.valeop.appointments_api.service.impl.ServiceTypeServiceImpl;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/servicetypes")
 public class ServiceTypeController {
@@ -51,16 +53,16 @@ public class ServiceTypeController {
 
     @PostMapping("/create")
     public ResponseEntity<ServiceTypeResponseDTO> createServiceType(
-            @Valid @RequestBody CreateServiceTypeDTO serviceTypeDTO) {
-        ServiceTypeResponseDTO serviceTypeSaved = serviceTypeServiceImpl.createServiceType(serviceTypeDTO);
+            @Valid @RequestBody CreateServiceTypeDTO createDTO) {
+        ServiceTypeResponseDTO serviceTypeSaved = serviceTypeServiceImpl.createServiceType(createDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(serviceTypeSaved);
     }
 
     @PutMapping(value = "/update", params = "id")
     public ResponseEntity<ServiceTypeResponseDTO> updateServiceType(
-            @Valid @RequestBody UpdateServiceTypeDTO serviceTypeDTO,
+            @Valid @RequestBody UpdateServiceTypeDTO updateDTO,
             @RequestParam(value = "id") Integer serviceTypeId) {
-        ServiceTypeResponseDTO serviceTypeUpdated = serviceTypeServiceImpl.updateServiceType(serviceTypeDTO,
+        ServiceTypeResponseDTO serviceTypeUpdated = serviceTypeServiceImpl.updateServiceType(updateDTO,
                 serviceTypeId);
         return ResponseEntity.status(HttpStatus.OK).body(serviceTypeUpdated);
     }
