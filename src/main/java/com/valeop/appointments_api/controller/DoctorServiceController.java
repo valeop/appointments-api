@@ -2,6 +2,7 @@ package com.valeop.appointments_api.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,6 +29,7 @@ import jakarta.validation.Valid;
 public class DoctorServiceController {
     private final DoctorServiceServiceImpl doctorServiceServiceImpl;
 
+    @Autowired
     public DoctorServiceController(DoctorServiceServiceImpl doctorServiceServiceImpl) {
         this.doctorServiceServiceImpl = doctorServiceServiceImpl;
     }
