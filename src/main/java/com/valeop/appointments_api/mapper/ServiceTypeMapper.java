@@ -12,7 +12,7 @@ public class ServiceTypeMapper {
     private ServiceTypeMapper() {
     }
 
-    public static ServiceType fromCreateServiceTypeDTO(CreateServiceTypeDTO dto) {
+    public static ServiceType createFromDTO(CreateServiceTypeDTO dto) {
         ServiceType serviceType = new ServiceType();
         serviceType.setServiceTypeName(dto.serviceTypeName());
         return serviceType;
