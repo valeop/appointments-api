@@ -14,7 +14,7 @@ public class AppointmentMapper {
     private AppointmentMapper() {
     }
 
-    public static Appointment fromCreateAppointmentDTO(CreateAppointmentDTO dto, User user,
+    public static Appointment createFromDTO(CreateAppointmentDTO dto, User user,
             DoctorService doctorService) {
         Appointment appointment = new Appointment();
         appointment.setAppointmentDateTime(dto.appointmentDateTime());
