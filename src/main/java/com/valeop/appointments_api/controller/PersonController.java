@@ -47,28 +47,28 @@ public class PersonController {
 
     @GetMapping(value = "/list", params = "id")
     public ResponseEntity<PersonResponseDTO> getPersonById(@RequestParam(value = "id") Integer personId) {
-        PersonResponseDTO personExisting = personServiceImpl.getPersonById(personId);
-        return ResponseEntity.status(HttpStatus.OK).body(personExisting);
+        PersonResponseDTO personFound = personServiceImpl.getPersonById(personId);
+        return ResponseEntity.status(HttpStatus.OK).body(personFound);
     }
 
     @GetMapping(value = "/list", params = "id-card")
     public ResponseEntity<PersonResponseDTO> getPersonByIdentityCard(
             @RequestParam(value = "id-card") String identityCard) {
-        PersonResponseDTO personExisting = personServiceImpl.getPersonByIdentityCard(identityCard);
-        return new ResponseEntity<>(personExisting, HttpStatus.OK);
+        PersonResponseDTO personFound = personServiceImpl.getPersonByIdentityCard(identityCard);
+        return new ResponseEntity<>(personFound, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<PersonResponseDTO> createPerson(@Valid @RequestBody CreatePersonDTO person) {
-        PersonResponseDTO newPerson = personServiceImpl.createPerson(person);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newPerson);
+    public ResponseEntity<PersonResponseDTO> createPerson(@Valid @RequestBody CreatePersonDTO createDTO) {
+        PersonResponseDTO personSaved = personServiceImpl.createPerson(createDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(personSaved);
     }
 
     @PutMapping("/update/{personId}")
-    public ResponseEntity<PersonResponseDTO> updatePerson(@Valid @RequestBody UpdatePersonDTO person,
+    public ResponseEntity<PersonResponseDTO> updatePerson(@Valid @RequestBody UpdatePersonDTO updateDTO,
             @PathVariable Integer personId) {
-        PersonResponseDTO personBBDD = personServiceImpl.updatePerson(person, personId);
-        return ResponseEntity.ok(personBBDD);
+        PersonResponseDTO personUpdated = personServiceImpl.updatePerson(updateDTO, personId);
+        return ResponseEntity.ok(personUpdated);
     }
 
     @DeleteMapping("/delete/{personId}")
