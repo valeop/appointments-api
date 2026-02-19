@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import com.valeop.appointments_api.service.impl.AppointmentServiceImpl;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/appointments")
 public class AppointmentController {
@@ -52,8 +54,8 @@ public class AppointmentController {
     @PostMapping("/create")
     public ResponseEntity<AppointmentResponseDTO> createAppointment(
             @Valid @RequestBody CreateAppointmentDTO createDTO) {
-        AppointmentResponseDTO appointmentCreated = appointmentServiceImpl.createAppointment(createDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(appointmentCreated);
+        AppointmentResponseDTO appointmentSaved = appointmentServiceImpl.createAppointment(createDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(appointmentSaved);
     }
 
     @PutMapping(value = "/update", params = "id")
