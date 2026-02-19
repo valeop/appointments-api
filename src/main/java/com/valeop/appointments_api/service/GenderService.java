@@ -15,9 +15,9 @@ public interface GenderService {
 
     GenderResponseDTO getGenderById(Integer genderId);
 
-    GenderResponseDTO createGender(CreateGenderDTO genderDTO);
+    GenderResponseDTO createGender(CreateGenderDTO createDTO);
 
-    GenderResponseDTO updateGender(UpdateGenderDTO genderDTO, Integer genderId);
+    GenderResponseDTO updateGender(UpdateGenderDTO updateDTO, Integer genderId);
 
     GenderResponseDTO deleteGender(Integer genderId);
 
