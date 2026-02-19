@@ -47,37 +47,37 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public DoctorResponseDTO createDoctor(CreateDoctorDTO createDoctorDTO) {
-        User userFound = userRepository.findByUserId(createDoctorDTO.user().getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User does not exist."));
+    public DoctorResponseDTO createDoctor(CreateDoctorDTO createDTO) {
+        User userFound = userRepository.findByUserId(createDTO.user().getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User does not exist. Try another one"));
 
-        Person personFound = personRepository.findByPersonId(createDoctorDTO.person().getPersonId())
-                .orElseThrow(() -> new ResourceNotFoundException("Person does not exist."));
+        Person personFound = personRepository.findByPersonId(createDTO.person().getPersonId())
+                .orElseThrow(() -> new ResourceNotFoundException("Person does not exist. Try annother one"));
 
-        Doctor newDoctor = DoctorMapper.fromCreateDoctorDTO(userFound, personFound);
-        doctorRepository.save(newDoctor);
-        return DoctorMapper.toResponseDTO(newDoctor);
+        Doctor newDoctor = DoctorMapper.createFromDTO(userFound, personFound);
+        Doctor doctorSaved = doctorRepository.save(newDoctor);
+        return DoctorMapper.toResponseDTO(doctorSaved);
     }
 
     @Override
-    public DoctorResponseDTO updateDoctor(UpdateDoctorDTO updateDoctorDTO, Integer doctorId) {
+    public DoctorResponseDTO updateDoctor(UpdateDoctorDTO updateDTO, Integer doctorId) {
         Doctor doctorFound = doctorRepository.findByDoctorId(doctorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor does not exist with ID #" + doctorId));
 
-        if (updateDoctorDTO.user() != null) {
-            Integer userId = updateDoctorDTO.user().getUserId();
-            if (!userRepository.existsById(userId)) {
-                throw new ResourceNotFoundException("User does not exist with ID #" + userId);
-            }
-            doctorFound.setUser(userRepository.getReferenceById(userId));
+        if (updateDTO.user() != null) {
+            Integer userId = updateDTO.user().getUserId();
+            User userFound = userRepository.findByUserId(userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("User does not exist. Try another one"));
+            doctorFound.setUser(userFound);
         }
-        if (updateDoctorDTO.person() != null) {
-            Integer personId = updateDoctorDTO.person().getPersonId();
-            if (!personRepository.existsById(personId)) {
-                throw new ResourceNotFoundException("Person does not exist with ID #" + personId);
-            }
-            doctorFound.setPerson(personRepository.getReferenceById(personId));
+
+        if (updateDTO.person() != null) {
+            Integer personId = updateDTO.person().getPersonId();
+            Person personFound = personRepository.findByPersonId(personId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Person does not exist. Try another one"));
+            doctorFound.setPerson(personFound);
         }
+        
         Doctor doctorSaved = doctorRepository.save(doctorFound);
         return DoctorMapper.toResponseDTO(doctorSaved);
     }
