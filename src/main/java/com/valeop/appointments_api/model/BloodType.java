@@ -6,8 +6,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import jakarta.persistence.Column;
 
 @Entity
@@ -24,7 +22,6 @@ public class BloodType {
     public BloodType() {
     }
 
-    @Autowired
     public BloodType(Integer bloodTypeId, String bloodTypeName) {
         this.bloodTypeId = bloodTypeId;
         this.bloodTypeName = bloodTypeName;
