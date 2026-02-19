@@ -15,7 +15,7 @@ public class PersonMapper {
     private PersonMapper() {
     }
 
-    public static Person fromCreatePersonDTO(CreatePersonDTO dto, Gender gender, BloodType bloodType) {
+    public static Person createFromDTO(CreatePersonDTO dto, Gender gender, BloodType bloodType) {
         Person person = new Person();
         person.setGender(gender);
         person.setBloodType(bloodType);
