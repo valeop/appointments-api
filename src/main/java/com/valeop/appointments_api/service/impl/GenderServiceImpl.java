@@ -41,32 +41,35 @@ public class GenderServiceImpl implements GenderService {
     }
 
     @Override
-    public GenderResponseDTO createGender(CreateGenderDTO genderDTO) {
-        Gender gender = GenderMapper.fromCreateGenderDTO(genderDTO);
+    public GenderResponseDTO createGender(CreateGenderDTO createDTO) {
+        Gender gender = GenderMapper.createFromDTO(createDTO);
         Gender genderSaved = Optional.of(gender)
                 .filter(g -> !g.getGenderName().isBlank())
                 .map(genderRepository::save)
                 .orElseThrow(() -> new BadRequestException("Name should not be empty."));
+
         return GenderMapper.toResponseDTO(genderSaved);
     }
 
     @Override
-    public GenderResponseDTO updateGender(UpdateGenderDTO genderDTO, Integer genderId) {
+    public GenderResponseDTO updateGender(UpdateGenderDTO updateDTO, Integer genderId) {
         Gender genderFound = genderRepository.findByGenderId(genderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Gender was not found with ID #" + genderId));
 
-        GenderMapper.updateFromDTO(genderDTO, genderFound);
-        genderRepository.save(genderFound);
+        if (!updateDTO.genderName().isBlank()) {
+            genderFound.setGenderName(updateDTO.genderName());
+        }
 
-        return GenderMapper.toResponseDTO(genderFound);
+        Gender genderUpdated = genderRepository.save(genderFound);
+        return GenderMapper.toResponseDTO(genderUpdated);
     }
 
     @Override
     public GenderResponseDTO deleteGender(Integer genderId) {
-
         Gender genderFound = genderRepository.findByGenderId(genderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Gender was not found with ID #" + genderId));
         genderRepository.deleteById(genderId);
+
         return GenderMapper.toResponseDTO(genderFound);
     }
 }
