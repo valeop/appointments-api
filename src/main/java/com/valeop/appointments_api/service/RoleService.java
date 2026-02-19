@@ -15,9 +15,9 @@ public interface RoleService {
 
     public RoleResponseDTO getRoleById(Integer roleId);
 
-    public RoleResponseDTO createRole(CreateRoleDTO roleDTO);
+    public RoleResponseDTO createRole(CreateRoleDTO createDTO);
 
-    public RoleResponseDTO updateRole(UpdateRoleDTO roleDTO, Integer roleId);
+    public RoleResponseDTO updateRole(UpdateRoleDTO updateDTO, Integer roleId);
 
     public RoleResponseDTO deleteRole(Integer roleId);
 }
