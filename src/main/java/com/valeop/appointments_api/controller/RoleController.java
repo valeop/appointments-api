@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import com.valeop.appointments_api.service.impl.RoleServiceImpl;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/roles")
 public class RoleController {
@@ -47,24 +49,25 @@ public class RoleController {
     @GetMapping("/all/{roleId}")
     public ResponseEntity<RoleResponseDTO> getRoleById(@PathVariable Integer roleId) {
         RoleResponseDTO roleFound = roleServiceImpl.getRoleById(roleId);
-
         return ResponseEntity.ok(roleFound);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<RoleResponseDTO> createRole(@Valid @RequestBody CreateRoleDTO roleDTO) {
-        return ResponseEntity.ok(roleServiceImpl.createRole(roleDTO));
+    public ResponseEntity<RoleResponseDTO> createRole(@Valid @RequestBody CreateRoleDTO createDTO) {
+        RoleResponseDTO roleSaved = roleServiceImpl.createRole(createDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(roleSaved);
     }
 
     @PutMapping(value = "/update", params = "id")
-    public ResponseEntity<RoleResponseDTO> updateRole(@Valid @RequestBody UpdateRoleDTO roleDTO,
+    public ResponseEntity<RoleResponseDTO> updateRole(@Valid @RequestBody UpdateRoleDTO updateDTO,
             @RequestParam(value = "id") Integer roleId) {
-        RoleResponseDTO roleSaved = roleServiceImpl.updateRole(roleDTO, roleId);
-        return ResponseEntity.status(HttpStatus.OK).body(roleSaved);
+        RoleResponseDTO roleUpdated = roleServiceImpl.updateRole(updateDTO, roleId);
+        return ResponseEntity.status(HttpStatus.OK).body(roleUpdated);
     }
 
     @DeleteMapping("delete/{roleId}")
     public ResponseEntity<RoleResponseDTO> deleteRole(@PathVariable Integer roleId) {
-        return ResponseEntity.ok(roleServiceImpl.deleteRole(roleId));
+        RoleResponseDTO roleDeleted = roleServiceImpl.deleteRole(roleId);
+        return ResponseEntity.ok(roleDeleted);
     }
 }
