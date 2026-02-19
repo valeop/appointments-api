@@ -14,9 +14,9 @@ public interface DoctorServiceService {
 
     DoctorServiceResponseDTO getDoctorServiceById(Integer doctorServiceId);
 
-    DoctorServiceResponseDTO createDoctorService(CreateDoctorServiceDTO doctorServiceDTO);
+    DoctorServiceResponseDTO createDoctorService(CreateDoctorServiceDTO createDTO);
 
-    DoctorServiceResponseDTO updateDoctorService(UpdateDoctorServiceDTO doctorServiceDTO, Integer doctorServiceId);
+    DoctorServiceResponseDTO updateDoctorService(UpdateDoctorServiceDTO updateDTO, Integer doctorServiceId);
 
     DoctorServiceResponseDTO deleteDoctorService(Integer doctorServiceId);
 }
