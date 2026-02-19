@@ -58,41 +58,41 @@ public class PersonServiceImpl implements PersonService {
         }
 
         @Override
-        public PersonResponseDTO createPerson(CreatePersonDTO personDTO) {
-                Gender genderFound = genderRepository.findByGenderId(personDTO.gender().getGenderId())
+        public PersonResponseDTO createPerson(CreatePersonDTO createDTO) {
+                Gender genderFound = genderRepository.findByGenderId(createDTO.gender().getGenderId())
                                 .orElseThrow(() -> new ResourceNotFoundException(
-                                                "Gender does not exist."));
+                                                "Gender does not exist. Try another one"));
 
-                BloodType bloodTypeFound = bloodTypeRepository.findByBloodTypeId(personDTO.bloodType().getBloodTypeId())
+                BloodType bloodTypeFound = bloodTypeRepository.findByBloodTypeId(createDTO.bloodType().getBloodTypeId())
                                 .orElseThrow(() -> new ResourceNotFoundException(
-                                                "BloodType does not exist."));
+                                                "BloodType does not exist. Try another one"));
 
-                Person newPerson = PersonMapper.fromCreatePersonDTO(personDTO, genderFound, bloodTypeFound);
-
-                return PersonMapper.toResponseDTO(personRepository.save(newPerson));
+                Person newPerson = PersonMapper.createFromDTO(createDTO, genderFound, bloodTypeFound);
+                Person personSaved = personRepository.save(newPerson);
+                return PersonMapper.toResponseDTO(personSaved);
         }
 
         @Override
-        public PersonResponseDTO updatePerson(UpdatePersonDTO personDTO, Integer personId) {
+        public PersonResponseDTO updatePerson(UpdatePersonDTO updateDTO, Integer personId) {
                 Person personFound = personRepository.findByPersonId(personId)
-                                .orElseThrow(() -> new ResourceNotFoundException(
-                                                "Person with ID #" + personId + MESSAGE));
+                                .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + personId));
 
-                if (personDTO.gender() != null) {
-                        Gender genderFound = genderRepository.findByGenderId(personDTO.gender().getGenderId())
-                                        .orElseThrow(() -> new ResourceNotFoundException("Gender does not exist."));
+                if (updateDTO.gender() != null) {
+                        Gender genderFound = genderRepository.findByGenderId(updateDTO.gender().getGenderId())
+                                        .orElseThrow(() -> new ResourceNotFoundException(
+                                                        "Gender does not exist. Try another one"));
                         personFound.setGender(genderFound);
                 }
 
-                if (personDTO.bloodType() != null) {
+                if (updateDTO.bloodType() != null) {
                         BloodType bloodTypeFound = bloodTypeRepository
-                                        .findByBloodTypeId(personDTO.bloodType().getBloodTypeId())
-                                        .orElseThrow(() -> new ResourceNotFoundException("Blood Type does not exist."));
+                                        .findByBloodTypeId(updateDTO.bloodType().getBloodTypeId())
+                                        .orElseThrow(() -> new ResourceNotFoundException(
+                                                        "Blood Type does not exist. Try another one"));
                         personFound.setBloodType(bloodTypeFound);
                 }
 
-                PersonMapper.updateFromDTO(personDTO, personFound);
-
+                PersonMapper.updateFromDTO(updateDTO, personFound);
                 Person personSaved = personRepository.save(personFound);
                 return PersonMapper.toResponseDTO(personSaved);
         }
