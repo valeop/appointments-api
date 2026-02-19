@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import com.valeop.appointments_api.service.impl.GenderServiceImpl;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/genders")
 public class GenderController {
@@ -50,17 +52,16 @@ public class GenderController {
     }
 
     @PostMapping("/create")
-    ResponseEntity<GenderResponseDTO> createGender(@Valid @RequestBody CreateGenderDTO genderDTO) {
-        GenderResponseDTO genderSaved = genderServiceImpl.createGender(genderDTO);
-        return ResponseEntity.ok(genderSaved);
+    ResponseEntity<GenderResponseDTO> createGender(@Valid @RequestBody CreateGenderDTO createDTO) {
+        GenderResponseDTO genderSaved = genderServiceImpl.createGender(createDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(genderSaved);
     }
 
     @PutMapping(value = "/update", params = "id")
-    ResponseEntity<GenderResponseDTO> updateGender(@Valid @RequestBody UpdateGenderDTO genderDTO,
+    ResponseEntity<GenderResponseDTO> updateGender(@Valid @RequestBody UpdateGenderDTO updateDTO,
             @RequestParam(value = "id") Integer genderId) {
-        GenderResponseDTO genderSaved = genderServiceImpl.updateGender(genderDTO, genderId);
-
-        return ResponseEntity.status(HttpStatus.OK).body(genderSaved);
+        GenderResponseDTO genderUpdated = genderServiceImpl.updateGender(updateDTO, genderId);
+        return ResponseEntity.status(HttpStatus.OK).body(genderUpdated);
     }
 
     @DeleteMapping("/delete/{genderId}")
