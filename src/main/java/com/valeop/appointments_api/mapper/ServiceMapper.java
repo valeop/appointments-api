@@ -14,10 +14,10 @@ public class ServiceMapper {
     private ServiceMapper() {
     }
 
-    public static Service fromCreateServiceDTO(CreateServiceDTO dto, ServiceType serviceFound) {
+    public static Service createFromDTO(CreateServiceDTO dto, ServiceType serviceType) {
         Service service = new Service();
         service.setServiceName(dto.serviceName());
-        service.setServiceType(serviceFound);
+        service.setServiceType(serviceType);
         return service;
     }
 
