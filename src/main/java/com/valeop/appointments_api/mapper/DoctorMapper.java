@@ -13,7 +13,7 @@ public class DoctorMapper {
     private DoctorMapper() {
     }
 
-    public static Doctor fromCreateDoctorDTO(User user, Person person) {
+    public static Doctor createFromDTO(User user, Person person) {
         Doctor doctor = new Doctor();
         doctor.setUser(user);
         doctor.setPerson(person);
