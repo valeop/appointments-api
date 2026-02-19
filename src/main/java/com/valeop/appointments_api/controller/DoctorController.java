@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import com.valeop.appointments_api.service.impl.DoctorServiceImpl;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/doctors")
 public class DoctorController {
@@ -50,16 +52,16 @@ public class DoctorController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<DoctorResponseDTO> createDoctor(@Valid @RequestBody CreateDoctorDTO createDoctorDTO) {
-        DoctorResponseDTO doctorSaved = doctorServiceImpl.createDoctor(createDoctorDTO);
-        return ResponseEntity.ok(doctorSaved);
+    public ResponseEntity<DoctorResponseDTO> createDoctor(@Valid @RequestBody CreateDoctorDTO createDTO) {
+        DoctorResponseDTO doctorSaved = doctorServiceImpl.createDoctor(createDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(doctorSaved);
     }
 
     @PutMapping(value = "/update", params = "id")
-    public ResponseEntity<DoctorResponseDTO> updateDoctor(@Valid @RequestBody UpdateDoctorDTO updateDoctorDTO,
+    public ResponseEntity<DoctorResponseDTO> updateDoctor(@Valid @RequestBody UpdateDoctorDTO updateDTO,
             @RequestParam(value = "id") Integer doctorId) {
-        DoctorResponseDTO doctorSaved = doctorServiceImpl.updateDoctor(updateDoctorDTO, doctorId);
-        return ResponseEntity.status(HttpStatus.OK).body(doctorSaved);
+        DoctorResponseDTO doctorUpdated = doctorServiceImpl.updateDoctor(updateDTO, doctorId);
+        return ResponseEntity.status(HttpStatus.OK).body(doctorUpdated);
     }
 
     @DeleteMapping("/delete/{doctorId}")
