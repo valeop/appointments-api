@@ -1,6 +1,7 @@
 package com.valeop.appointments_api.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,20 +39,25 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
     }
 
     @Override
-    public ServiceTypeResponseDTO createServiceType(CreateServiceTypeDTO serviceTypeDTO) {
-        ServiceType newServiceType = ServiceTypeMapper.fromCreateServiceTypeDTO(serviceTypeDTO);
-        serviceTypeRepository.save(newServiceType);
-        return ServiceTypeMapper.toResponseDTO(newServiceType);
+    public ServiceTypeResponseDTO createServiceType(CreateServiceTypeDTO createDTO) {
+        ServiceType newServiceType = ServiceTypeMapper.createFromDTO(createDTO);
+        return Optional.of(newServiceType).filter(s -> !s.getServiceTypeName().isBlank())
+                .map(serviceTypeRepository::save)
+                .map(ServiceTypeMapper::toResponseDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("serviceType should not be empty."));
     }
 
     @Override
-    public ServiceTypeResponseDTO updateServiceType(UpdateServiceTypeDTO serviceTypeDTO, Integer serviceTypeId) {
+    public ServiceTypeResponseDTO updateServiceType(UpdateServiceTypeDTO updateDTO, Integer serviceTypeId) {
         ServiceType serviceTypeFound = serviceTypeRepository.findByServiceTypeId(serviceTypeId)
                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + serviceTypeId));
 
-        ServiceTypeMapper.updateFromDTO(serviceTypeDTO, serviceTypeFound);
-        serviceTypeRepository.save(serviceTypeFound);
-        return ServiceTypeMapper.toResponseDTO(serviceTypeFound);
+        if (!updateDTO.serviceTypeName().isBlank()) {
+            serviceTypeFound.setServiceTypeName(updateDTO.serviceTypeName());
+        }
+
+        ServiceType serviceTypeUpdated = serviceTypeRepository.save(serviceTypeFound);
+        return ServiceTypeMapper.toResponseDTO(serviceTypeUpdated);
     }
 
     @Override
