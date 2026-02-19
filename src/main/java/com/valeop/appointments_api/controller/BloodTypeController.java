@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import com.valeop.appointments_api.service.impl.BloodTypeServiceImpl;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/bloodtypes")
 public class BloodTypeController {
@@ -40,26 +42,26 @@ public class BloodTypeController {
     @GetMapping("/all")
     ResponseEntity<List<BloodTypeResponseDTO>> getAllBloodTypes() {
         List<BloodTypeResponseDTO> bloodTypeList = bloodTypeServiceImpl.getListBloodType();
-
         return ResponseEntity.status(HttpStatus.OK).body(bloodTypeList);
     }
 
     @GetMapping("/all/{bloodTypeId}")
     ResponseEntity<BloodTypeResponseDTO> getBloodTypeById(@PathVariable Integer bloodTypeId) {
-        return ResponseEntity.ok(bloodTypeServiceImpl.getBloodTypeById(bloodTypeId));
+        BloodTypeResponseDTO bloodTypeFound = bloodTypeServiceImpl.getBloodTypeById(bloodTypeId);
+        return ResponseEntity.ok(bloodTypeFound);
     }
 
     @PostMapping("/create")
-    ResponseEntity<BloodTypeResponseDTO> createBloodType(@Valid @RequestBody CreateBloodTypeDTO bloodTypeDTO) {
-        BloodTypeResponseDTO bloodTypeSaved = bloodTypeServiceImpl.createBloodType(bloodTypeDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(bloodTypeSaved);
+    ResponseEntity<BloodTypeResponseDTO> createBloodType(@Valid @RequestBody CreateBloodTypeDTO createDTO) {
+        BloodTypeResponseDTO bloodTypeSaved = bloodTypeServiceImpl.createBloodType(createDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(bloodTypeSaved);
     }
 
     @PutMapping(value = "/update", params = "id")
-    ResponseEntity<BloodTypeResponseDTO> updateBloodType(@Valid @RequestBody UpdateBloodTypeDTO bloodTypeDTO,
+    ResponseEntity<BloodTypeResponseDTO> updateBloodType(@Valid @RequestBody UpdateBloodTypeDTO updateDTO,
             @RequestParam(value = "id") Integer bloodTypeId) {
-        BloodTypeResponseDTO bloodTypeSaved = bloodTypeServiceImpl.updateBloodType(bloodTypeDTO, bloodTypeId);
-        return ResponseEntity.ok(bloodTypeSaved);
+        BloodTypeResponseDTO bloodTypeUpdated = bloodTypeServiceImpl.updateBloodType(updateDTO, bloodTypeId);
+        return ResponseEntity.ok(bloodTypeUpdated);
     }
 
     @DeleteMapping("/delete/{bloodTypeId}")
