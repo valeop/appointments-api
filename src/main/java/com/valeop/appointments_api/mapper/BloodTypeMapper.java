@@ -13,7 +13,7 @@ public class BloodTypeMapper {
     private BloodTypeMapper() {
     }
 
-    public static BloodType fromCreateBloodTypeDTO(CreateBloodTypeDTO dto) {
+    public static BloodType createFromDTO(CreateBloodTypeDTO dto) {
         BloodType bloodType = new BloodType();
         bloodType.setBloodTypeName(dto.bloodTypeName());
         return bloodType;
