@@ -58,11 +58,11 @@ public class AppointmentServiceImpl implements AppointmentService {
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "DoctorService does not exist. Try another one"));
 
-                Appointment newAppointment = AppointmentMapper.fromCreateAppointmentDTO(createDTO, userFound,
+                Appointment newAppointment = AppointmentMapper.createFromDTO(createDTO, userFound,
                                 doctorServiceFound);
 
-                appointmentRepository.save(newAppointment);
-                return AppointmentMapper.toResponseDTO(newAppointment);
+                Appointment appointmentSaved = appointmentRepository.save(newAppointment);
+                return AppointmentMapper.toResponseDTO(appointmentSaved);
         }
 
         @Override
@@ -71,25 +71,25 @@ public class AppointmentServiceImpl implements AppointmentService {
                                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + appointmentId));
 
                 if (updateDTO.user() != null) {
-                        User userFound = userRepository.findByUserId(updateDTO.user().getUserId())
+                        Integer userId = updateDTO.user().getUserId();
+                        User userFound = userRepository.findByUserId(userId)
                                         .orElseThrow(() -> new ResourceNotFoundException(
                                                         "User does not exist. Try another one"));
                         appointmentFound.setUser(userFound);
                 }
 
                 if (updateDTO.doctorService() != null) {
+                        Integer doctorServiceId = updateDTO.doctorService().getDoctorServiceId();
                         DoctorService doctorServiceFound = doctorServiceRepository
-                                        .findByDoctorServiceId(updateDTO.doctorService().getDoctorServiceId())
+                                        .findByDoctorServiceId(doctorServiceId)
                                         .orElseThrow(() -> new ResourceNotFoundException(
                                                         "DoctorService does not exist. Try another one"));
                         appointmentFound.setDoctorService(doctorServiceFound);
                 }
 
                 AppointmentMapper.updateFromDTO(updateDTO, appointmentFound);
-
-                appointmentRepository.save(appointmentFound);
-
-                return AppointmentMapper.toResponseDTO(appointmentFound);
+                Appointment appointmentUpdated = appointmentRepository.save(appointmentFound);
+                return AppointmentMapper.toResponseDTO(appointmentUpdated);
         }
 
         @Override
