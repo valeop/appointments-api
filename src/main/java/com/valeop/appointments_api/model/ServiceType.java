@@ -1,7 +1,5 @@
 package com.valeop.appointments_api.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +21,6 @@ public class ServiceType {
     public ServiceType() {
     }
 
-    @Autowired
     public ServiceType(Integer serviceTypeId, String serviceTypeName) {
         this.serviceTypeId = serviceTypeId;
         this.serviceTypeName = serviceTypeName;
