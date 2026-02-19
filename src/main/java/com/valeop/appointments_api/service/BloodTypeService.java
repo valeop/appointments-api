@@ -14,9 +14,9 @@ public interface BloodTypeService {
 
     BloodTypeResponseDTO getBloodTypeById(Integer bloodTypeId);
 
-    BloodTypeResponseDTO createBloodType(CreateBloodTypeDTO bloodTypeDTO);
+    BloodTypeResponseDTO createBloodType(CreateBloodTypeDTO createDTO);
 
-    BloodTypeResponseDTO updateBloodType(UpdateBloodTypeDTO bloodTypeDTO, Integer bloodTypeId);
+    BloodTypeResponseDTO updateBloodType(UpdateBloodTypeDTO updateDTO, Integer bloodTypeId);
 
     BloodTypeResponseDTO deleteBloodType(Integer bloodTypeId);
 }
