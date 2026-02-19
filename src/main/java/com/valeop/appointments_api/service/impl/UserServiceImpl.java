@@ -49,61 +49,57 @@ public class UserServiceImpl implements UserService {
         }
 
         @Override
-        public UserResponseDTO createUser(CreateUserDTO userDTO) {
-                Person personFound = personRepository.findByPersonId(userDTO.person().getPersonId())
+        public UserResponseDTO createUser(CreateUserDTO createDTO) {
+                Person personFound = personRepository.findByPersonId(createDTO.person().getPersonId())
                                 .orElseThrow(() -> new ResourceNotFoundException("Person does not exist."));
 
-                Role roleFound = roleRepository.findByRoleId(userDTO.role().getRoleId())
+                Role roleFound = roleRepository.findByRoleId(createDTO.role().getRoleId())
                                 .orElseThrow(() -> new ResourceNotFoundException("Role does not exist."));
 
-                User newUser = UserMapper.fromCreateUserDTO(userDTO, personFound, roleFound);
-
-                return UserMapper.toResponseDTO(userRepository.save(newUser));
-        }
-
-        @Override
-        public UserResponseDTO updateUser(UpdateUserDTO userDTO, Integer userId) {
-                User userFound = userRepository.findByUserId(userId)
-                                .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + userId));
-
-                if (userDTO.person() != null) {
-                        Integer personId = userDTO.person().getPersonId();
-                        if (!personRepository.existsById(personId)) {
-                                throw new ResourceNotFoundException("Person does not exist with ID #" + userId);
-                        }
-                        Person personFound = personRepository.getReferenceById(userId);
-                        userFound.setPerson(personFound);
-                }
-
-                if (userDTO.role() != null) {
-                        Integer roleId = userDTO.role().getRoleId();
-                        if (!roleRepository.existsById(roleId)) {
-                                throw new ResourceNotFoundException("Role does not exist with ID #" + roleId);
-                        }
-                        Role roleFound = roleRepository.getReferenceById(roleId);
-                        userFound.setRole(roleFound);
-                }
-
-                UserMapper.updateFromDTO(userDTO, userFound);
-
-                User userSaved = userRepository.save(userFound);
+                User newUser = UserMapper.createFromDTO(createDTO, personFound, roleFound);
+                User userSaved = userRepository.save(newUser);
                 return UserMapper.toResponseDTO(userSaved);
         }
 
         @Override
-        public UserResponseDTO updateUserPassword(UpdatePasswordDTO userDTO, Integer userId) {
-                User user = userRepository.findByUserId(userId)
+        public UserResponseDTO updateUser(UpdateUserDTO updateDTO, Integer userId) {
+                User userFound = userRepository.findByUserId(userId)
+                                .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + userId));
+
+                if (updateDTO.person() != null) {
+                        Integer personId = updateDTO.person().getPersonId();
+                        Person personFound = personRepository.findByPersonId(personId)
+                                        .orElseThrow(() -> new ResourceNotFoundException("Person does not exist."));
+                        userFound.setPerson(personFound);
+                }
+
+                if (updateDTO.role() != null) {
+                        Integer roleId = updateDTO.role().getRoleId();
+                        Role roleFound = roleRepository.findByRoleId(roleId)
+                                        .orElseThrow(() -> new ResourceNotFoundException("Role does not exist."));
+                        userFound.setRole(roleFound);
+                }
+
+                UserMapper.updateFromDTO(updateDTO, userFound);
+                User userUpdated = userRepository.save(userFound);
+                return UserMapper.toResponseDTO(userUpdated);
+        }
+
+        @Override
+        public UserResponseDTO updateUserPassword(UpdatePasswordDTO updateDTO, Integer userId) {
+                User userFound = userRepository.findByUserId(userId)
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "User does not exist with ID #" + userId));
-                if (!user.getPasswordHash().matches(userDTO.currentPassword())) {
+                if (!userFound.getPasswordHash().matches(updateDTO.currentPassword())) {
                         throw new BadRequestException("Invalid current password");
                 }
-                if (!userDTO.newPassword().equals(userDTO.confirmNewPassword())) {
+                if (!updateDTO.newPassword().equals(updateDTO.confirmNewPassword())) {
                         throw new BadRequestException("New password does not match with password confirmed");
                 }
-                user.setPasswordHash(userDTO.newPassword());
-                userRepository.save(user);
-                return UserMapper.toResponseDTO(user);
+
+                userFound.setPasswordHash(updateDTO.newPassword());
+                User userUpdated = userRepository.save(userFound);
+                return UserMapper.toResponseDTO(userUpdated);
         }
 
         @Override
