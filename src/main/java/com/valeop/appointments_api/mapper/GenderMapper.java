@@ -13,7 +13,7 @@ public class GenderMapper {
     private GenderMapper() {
     }
 
-    public static Gender fromCreateGenderDTO(CreateGenderDTO dto) {
+    public static Gender createFromDTO(CreateGenderDTO dto) {
         Gender gender = new Gender();
         gender.setGenderName(dto.genderName());
         return gender;
