@@ -13,7 +13,7 @@ public class DoctorServiceMapper {
     private DoctorServiceMapper() {
     }
 
-    public static DoctorService fromCreateDoctorService(Doctor doctor, Service service) {
+    public static DoctorService createFromDTO(Doctor doctor, Service service) {
         DoctorService doctorService = new DoctorService();
         doctorService.setDoctor(doctor);
         doctorService.setService(service);
