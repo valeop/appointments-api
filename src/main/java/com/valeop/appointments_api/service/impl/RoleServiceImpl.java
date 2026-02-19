@@ -41,22 +41,25 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleResponseDTO createRole(CreateRoleDTO roleDTO) {
-        Role role = RoleMapper.fromCreateRoleDTO(roleDTO);
+    public RoleResponseDTO createRole(CreateRoleDTO createDTO) {
+        Role role = RoleMapper.createFromDTO(createDTO);
         return Optional.of(role).filter(r -> !r.getRoleName().isBlank())
                 .map(roleRepository::save)
                 .map(RoleMapper::toResponseDTO)
-                .orElseThrow(() -> new BadRequestException("RoleName should not be empty."));
+                .orElseThrow(() -> new BadRequestException("roleName should not be empty."));
     }
 
     @Override
-    public RoleResponseDTO updateRole(UpdateRoleDTO roleDTO, Integer roleId) {
+    public RoleResponseDTO updateRole(UpdateRoleDTO updateDTO, Integer roleId) {
         Role roleFound = roleRepository.findByRoleId(roleId)
                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + roleId));
-        RoleMapper.updateFromDTO(roleDTO, roleFound);
-        roleRepository.save(roleFound);
 
-        return RoleMapper.toResponseDTO(roleFound);
+        if (!updateDTO.roleName().isBlank()) {
+            roleFound.setRoleName(updateDTO.roleName());
+        }
+
+        Role roleUpdated = roleRepository.save(roleFound);
+        return RoleMapper.toResponseDTO(roleUpdated);
     }
 
     @Override
