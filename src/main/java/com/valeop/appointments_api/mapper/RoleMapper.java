@@ -13,7 +13,7 @@ public class RoleMapper {
     private RoleMapper() {
     }
 
-    public static Role fromCreateRoleDTO(CreateRoleDTO dto) {
+    public static Role createFromDTO(CreateRoleDTO dto) {
         Role role = new Role();
         role.setRoleName(dto.roleName());
         return role;
