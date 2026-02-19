@@ -2,8 +2,6 @@ package com.valeop.appointments_api.model;
 
 import java.time.LocalDateTime;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,7 +33,6 @@ public class Appointment {
     public Appointment() {
     }
 
-    @Autowired
     public Appointment(Integer appointmentId, User user, DoctorService doctorService,
             LocalDateTime appointmentDateTime) {
         this.appointmentId = appointmentId;
