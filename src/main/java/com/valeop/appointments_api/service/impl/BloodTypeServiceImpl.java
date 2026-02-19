@@ -41,28 +41,34 @@ public class BloodTypeServiceImpl implements BloodTypeService {
     }
 
     @Override
-    public BloodTypeResponseDTO createBloodType(CreateBloodTypeDTO bloodTypeDTO) {
-        BloodType bloodType = BloodTypeMapper.fromCreateBloodTypeDTO(bloodTypeDTO);
+    public BloodTypeResponseDTO createBloodType(CreateBloodTypeDTO createDTO) {
+        BloodType bloodType = BloodTypeMapper.createFromDTO(createDTO);
         BloodType bloodTypeSaved = Optional.of(bloodType)
                 .filter(b -> !b.getBloodTypeName().isBlank())
                 .map(bloodTypeRepository::save)
-                .orElseThrow(() -> new BadRequestException("BloodTypeName shouldn't be empty."));
+                .orElseThrow(() -> new BadRequestException("BloodTypeName should not be empty."));
+
         return BloodTypeMapper.toResponseDTO(bloodTypeSaved);
     }
 
     @Override
-    public BloodTypeResponseDTO updateBloodType(UpdateBloodTypeDTO bloodTypeDTO, Integer bloodTypeId) {
+    public BloodTypeResponseDTO updateBloodType(UpdateBloodTypeDTO updateDTO, Integer bloodTypeId) {
         BloodType bloodTypeFound = bloodTypeRepository.findByBloodTypeId(bloodTypeId)
                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + bloodTypeId));
-        BloodTypeMapper.updateFromDTO(bloodTypeDTO, bloodTypeFound);
-        bloodTypeRepository.save(bloodTypeFound);
-        return BloodTypeMapper.toResponseDTO(bloodTypeFound);
+
+        if (!updateDTO.bloodTypeName().isBlank()) {
+            bloodTypeFound.setBloodTypeName(updateDTO.bloodTypeName());
+        }
+
+        BloodType bloodTypeSaved = bloodTypeRepository.save(bloodTypeFound);
+        return BloodTypeMapper.toResponseDTO(bloodTypeSaved);
     }
 
     @Override
     public BloodTypeResponseDTO deleteBloodType(Integer bloodTypeId) {
         BloodType bloodTypeFound = bloodTypeRepository.findByBloodTypeId(bloodTypeId)
                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + bloodTypeId));
+
         bloodTypeRepository.deleteById(bloodTypeId);
         return BloodTypeMapper.toResponseDTO(bloodTypeFound);
     }
