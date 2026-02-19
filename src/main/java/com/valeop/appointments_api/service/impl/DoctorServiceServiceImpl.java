@@ -2,6 +2,7 @@ package com.valeop.appointments_api.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.valeop.appointments_api.dto.doctorservice.CreateDoctorServiceDTO;
@@ -23,6 +24,7 @@ public class DoctorServiceServiceImpl implements DoctorServiceService {
     private final ServiceRepository serviceRepository;
     private static final String MESSAGE = "doctorService does not exist with ID #";
 
+    @Autowired
     public DoctorServiceServiceImpl(DoctorServiceRepository doctorServiceRepository, DoctorRepository doctorRepository,
             ServiceRepository serviceRepository) {
         this.doctorServiceRepository = doctorServiceRepository;
@@ -44,42 +46,43 @@ public class DoctorServiceServiceImpl implements DoctorServiceService {
     }
 
     @Override
-    public DoctorServiceResponseDTO createDoctorService(CreateDoctorServiceDTO doctorServiceDTO) {
-        Doctor doctorFound = doctorRepository.findByDoctorId(doctorServiceDTO.doctor().getDoctorId())
+    public DoctorServiceResponseDTO createDoctorService(CreateDoctorServiceDTO createDTO) {
+        Doctor doctorFound = doctorRepository.findByDoctorId(createDTO.doctor().getDoctorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor does not exist."));
 
         com.valeop.appointments_api.model.Service serviceFound = serviceRepository
-                .findByServiceId(doctorServiceDTO.service().getServiceId())
+                .findByServiceId(createDTO.service().getServiceId())
                 .orElseThrow(() -> new ResourceNotFoundException("Service does not exist."));
 
-        DoctorService doctorService = DoctorServiceMapper.fromCreateDoctorService(doctorFound, serviceFound);
-        doctorServiceRepository.save(doctorService);
-        return DoctorServiceMapper.toResponseDTO(doctorService);
+        DoctorService newDoctorService = DoctorServiceMapper.createFromDTO(doctorFound, serviceFound);
+        DoctorService doctorServiceSaved = doctorServiceRepository.save(newDoctorService);
+        return DoctorServiceMapper.toResponseDTO(doctorServiceSaved);
     }
 
     @Override
-    public DoctorServiceResponseDTO updateDoctorService(UpdateDoctorServiceDTO doctorServiceDTO,
+    public DoctorServiceResponseDTO updateDoctorService(UpdateDoctorServiceDTO updateDTO,
             Integer doctorServiceId) {
 
         DoctorService doctorServiceFound = doctorServiceRepository.findByDoctorServiceId(doctorServiceId)
                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + doctorServiceId));
 
-        if (doctorServiceDTO.doctor() != null) {
-            Integer doctorId = doctorServiceDTO.doctor().getDoctorId();
+        if (updateDTO.doctor() != null) {
+            Integer doctorId = updateDTO.doctor().getDoctorId();
             Doctor doctorFound = doctorRepository.findByDoctorId(doctorId)
                     .orElseThrow(() -> new ResourceNotFoundException("Doctor does not exist with ID #" + doctorId));
 
             doctorServiceFound.setDoctor(doctorFound);
         }
-        if (doctorServiceDTO.service() != null) {
-            Integer serviceId = doctorServiceDTO.service().getServiceId();
+        if (updateDTO.service() != null) {
+            Integer serviceId = updateDTO.service().getServiceId();
             com.valeop.appointments_api.model.Service serviceFound = serviceRepository.findByServiceId(serviceId)
                     .orElseThrow(() -> new ResourceNotFoundException("Service does not exist with ID #" + serviceId));
 
             doctorServiceFound.setService(serviceFound);
         }
-        doctorServiceRepository.save(doctorServiceFound);
-        return DoctorServiceMapper.toResponseDTO(doctorServiceFound);
+
+        DoctorService doctorServiceSaved = doctorServiceRepository.save(doctorServiceFound);
+        return DoctorServiceMapper.toResponseDTO(doctorServiceSaved);
     }
 
     @Override
