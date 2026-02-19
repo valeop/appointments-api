@@ -15,11 +15,11 @@ public interface UserService {
 
     UserResponseDTO getUserById(Integer userId);
 
-    UserResponseDTO createUser(CreateUserDTO userDTO);
+    UserResponseDTO createUser(CreateUserDTO createDTO);
 
-    UserResponseDTO updateUser(UpdateUserDTO userDTO, Integer userId);
+    UserResponseDTO updateUser(UpdateUserDTO updateDTO, Integer userId);
 
-    UserResponseDTO updateUserPassword(UpdatePasswordDTO userDTO, Integer userId);
+    UserResponseDTO updateUserPassword(UpdatePasswordDTO updateDTO, Integer userId);
 
     UserResponseDTO deleteUser(Integer userId);
 }
