@@ -14,7 +14,7 @@ public class UserMapper {
     private UserMapper() {
     }
 
-    public static User fromCreateUserDTO(CreateUserDTO dto, Person person, Role role) {
+    public static User createFromDTO(CreateUserDTO dto, Person person, Role role) {
         User user = new User();
         user.setPerson(person);
         user.setRole(role);
