@@ -14,9 +14,9 @@ public interface ServiceTypeService {
 
     ServiceTypeResponseDTO getServiceTypeById(Integer serviceTypeId);
 
-    ServiceTypeResponseDTO createServiceType(CreateServiceTypeDTO serviceTypeDTO);
+    ServiceTypeResponseDTO createServiceType(CreateServiceTypeDTO createDTO);
 
-    ServiceTypeResponseDTO updateServiceType(UpdateServiceTypeDTO serviceTypeDTO, Integer serviceTypeId);
+    ServiceTypeResponseDTO updateServiceType(UpdateServiceTypeDTO updateDTO, Integer serviceTypeId);
 
     ServiceTypeResponseDTO deleteServiceType(Integer serviceTypeId);
 }
