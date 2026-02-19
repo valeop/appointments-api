@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.valeop.appointments_api.dto.service.CreateServiceDTO;
 import com.valeop.appointments_api.dto.service.ServiceResponseDTO;
 import com.valeop.appointments_api.dto.service.UpdateServiceDTO;
-import com.valeop.appointments_api.exceptions.BadRequestException;
 import com.valeop.appointments_api.exceptions.ResourceNotFoundException;
 import com.valeop.appointments_api.mapper.ServiceMapper;
 import com.valeop.appointments_api.model.ServiceType;
@@ -45,19 +44,15 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     public ServiceResponseDTO createService(CreateServiceDTO createDTO) {
-        if (createDTO.serviceType() == null) {
-            throw new BadRequestException("serviceType should not be empty");
-        }
-        Integer serviceTypeId = createDTO.serviceType().getServiceTypeId();
-        if (!serviceTypeRepository.existsById(serviceTypeId)) {
-            throw new ResourceNotFoundException("serviceType does not exist. Try another one");
-        }
-        ServiceType serviceTypeFound = serviceTypeRepository.getReferenceById(serviceTypeId);
-        com.valeop.appointments_api.model.Service newService = ServiceMapper.fromCreateServiceDTO(createDTO,
+        ServiceType serviceTypeFound = serviceTypeRepository
+                .findByServiceTypeId(createDTO.serviceType().getServiceTypeId())
+                .orElseThrow(() -> new ResourceNotFoundException("ServiceType does not exist. Try another one"));
+
+        com.valeop.appointments_api.model.Service newService = ServiceMapper.createFromDTO(createDTO,
                 serviceTypeFound);
 
-        serviceRepository.save(newService);
-        return ServiceMapper.toResponseDTO(newService);
+        com.valeop.appointments_api.model.Service serviceSaved = serviceRepository.save(newService);
+        return ServiceMapper.toResponseDTO(serviceSaved);
     }
 
     @Override
@@ -67,15 +62,16 @@ public class ServiceServiceImpl implements ServiceService {
 
         if (updateDTO.serviceType() != null) {
             Integer serviceTypeId = updateDTO.serviceType().getServiceTypeId();
-            if (!serviceRepository.existsById(serviceTypeId)) {
-                throw new ResourceNotFoundException("serviceType does not exist with ID #" + serviceTypeId);
-            }
-            serviceFound.setServiceType(serviceTypeRepository.getReferenceById(serviceTypeId));
-        }
-        ServiceMapper.updateFromDTO(updateDTO, serviceFound);
-        serviceRepository.save(serviceFound);
+            ServiceType serviceTypeFound = serviceTypeRepository
+                    .findByServiceTypeId(serviceTypeId)
+                    .orElseThrow(() -> new ResourceNotFoundException("serviceType does not exist. Try another one"));
 
-        return ServiceMapper.toResponseDTO(serviceFound);
+            serviceFound.setServiceType(serviceTypeFound);
+        }
+
+        ServiceMapper.updateFromDTO(updateDTO, serviceFound);
+        com.valeop.appointments_api.model.Service serviceUpdated = serviceRepository.save(serviceFound);
+        return ServiceMapper.toResponseDTO(serviceUpdated);
     }
 
     @Override
