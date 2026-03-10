@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.valeop.appointments_api.dto.user.CreateUserDTO;
-import com.valeop.appointments_api.dto.user.UpdatePasswordDTO;
 import com.valeop.appointments_api.dto.user.UpdateUserDTO;
 import com.valeop.appointments_api.dto.user.UserResponseDTO;
 import com.valeop.appointments_api.service.impl.UserServiceImpl;
@@ -63,13 +62,6 @@ public class UserController {
             @RequestParam(value = "id") Integer userId) {
         UserResponseDTO userUpdated = userServiceImpl.updateUser(updateDTO, userId);
         return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
-    }
-
-    @PutMapping(value = "/update/password", params = "id")
-    public ResponseEntity<UserResponseDTO> updateUserPassword(@Valid @RequestBody UpdatePasswordDTO updateDTO,
-            @RequestParam(value = "id") Integer userId) {
-        UserResponseDTO userUpdated = userServiceImpl.updateUserPassword(updateDTO, userId);
-        return ResponseEntity.ok(userUpdated);
     }
 
     @DeleteMapping("/delete/{userId}")
