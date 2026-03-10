@@ -19,7 +19,6 @@ public class UserMapper {
         user.setPerson(person);
         user.setRole(role);
         user.setEmail(dto.email());
-        user.setPasswordHash(dto.passwordHash());
         return user;
     }
 
@@ -30,6 +29,6 @@ public class UserMapper {
     }
 
     public static UserResponseDTO toResponseDTO(User user) {
-        return new UserResponseDTO(user.getUserId(), user.getPerson(), user.getRole(), user.getEmail());
+        return new UserResponseDTO(user.getUserId(), user.getPerson(), user.getRole(), user.getUsername());
     }
 }
