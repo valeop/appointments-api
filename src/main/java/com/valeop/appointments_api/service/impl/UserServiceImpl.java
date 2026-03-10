@@ -3,13 +3,12 @@ package com.valeop.appointments_api.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.valeop.appointments_api.dto.user.CreateUserDTO;
-import com.valeop.appointments_api.dto.user.UpdatePasswordDTO;
 import com.valeop.appointments_api.dto.user.UpdateUserDTO;
 import com.valeop.appointments_api.dto.user.UserResponseDTO;
-import com.valeop.appointments_api.exceptions.BadRequestException;
 import com.valeop.appointments_api.exceptions.ResourceNotFoundException;
 import com.valeop.appointments_api.mapper.UserMapper;
 import com.valeop.appointments_api.model.Person;
@@ -25,14 +24,16 @@ public class UserServiceImpl implements UserService {
         private final UserRepository userRepository;
         private final PersonRepository personRepository;
         private final RoleRepository roleRepository;
+        private final PasswordEncoder passwordEncoder;
         private static final String MESSAGE = "User not found with ID #";
 
         @Autowired
         public UserServiceImpl(UserRepository userRepository, PersonRepository personRepository,
-                        RoleRepository roleRepository) {
+                        RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
                 this.userRepository = userRepository;
                 this.personRepository = personRepository;
                 this.roleRepository = roleRepository;
+                this.passwordEncoder = passwordEncoder;
         }
 
         @Override
@@ -57,6 +58,7 @@ public class UserServiceImpl implements UserService {
                                 .orElseThrow(() -> new ResourceNotFoundException("Role does not exist."));
 
                 User newUser = UserMapper.createFromDTO(createDTO, personFound, roleFound);
+                newUser.setPasswordHash(passwordEncoder.encode(createDTO.passwordHash()));
                 User userSaved = userRepository.save(newUser);
                 return UserMapper.toResponseDTO(userSaved);
         }
@@ -81,23 +83,6 @@ public class UserServiceImpl implements UserService {
                 }
 
                 UserMapper.updateFromDTO(updateDTO, userFound);
-                User userUpdated = userRepository.save(userFound);
-                return UserMapper.toResponseDTO(userUpdated);
-        }
-
-        @Override
-        public UserResponseDTO updateUserPassword(UpdatePasswordDTO updateDTO, Integer userId) {
-                User userFound = userRepository.findByUserId(userId)
-                                .orElseThrow(() -> new ResourceNotFoundException(
-                                                "User does not exist with ID #" + userId));
-                if (!userFound.getPasswordHash().matches(updateDTO.currentPassword())) {
-                        throw new BadRequestException("Invalid current password");
-                }
-                if (!updateDTO.newPassword().equals(updateDTO.confirmNewPassword())) {
-                        throw new BadRequestException("New password does not match with password confirmed");
-                }
-
-                userFound.setPasswordHash(updateDTO.newPassword());
                 User userUpdated = userRepository.save(userFound);
                 return UserMapper.toResponseDTO(userUpdated);
         }
