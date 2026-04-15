@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.valeop.appointments_api.model.Doctor;
 import com.valeop.appointments_api.model.DoctorService;
 
 @Repository
@@ -13,4 +14,6 @@ public interface DoctorServiceRepository extends JpaRepository<DoctorService, In
     List<DoctorService> findAll();
 
     Optional<DoctorService> findByDoctorServiceId(Integer doctorServiceId);
+
+    Optional<DoctorService> findByDoctor(Doctor doctor);
 }
