@@ -30,7 +30,14 @@ public class AppointmentMapper {
     }
 
     public static AppointmentResponseDTO toResponseDTO(Appointment appointment) {
+        String patientFullName = appointment.getUser().getPerson().getFirstName() + " "
+                + appointment.getUser().getPerson().getLastName();
+        String doctorFullName = appointment.getDoctorService().getDoctor().getPerson().getFirstName()
+                + " " + appointment.getDoctorService().getDoctor().getPerson().getLastName();
+
         return new AppointmentResponseDTO(appointment.getAppointmentId(), appointment.getAppointmentDateTime(),
-                appointment.getUser(), appointment.getDoctorService());
+                patientFullName, doctorFullName,
+                appointment.getDoctorService().getService().getServiceName(),
+                appointment.getDoctorService().getService().getServiceType().getServiceTypeName());
     }
 }
