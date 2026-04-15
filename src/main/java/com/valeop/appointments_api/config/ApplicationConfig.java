@@ -1,5 +1,6 @@
 package com.valeop.appointments_api.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,12 +12,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.valeop.appointments_api.model.UserSecurityDetails;
 import com.valeop.appointments_api.repository.UserRepository;
 
 @Configuration
 public class ApplicationConfig {
     private final UserRepository userRepository;
 
+    @Autowired
     public ApplicationConfig(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -24,12 +27,17 @@ public class ApplicationConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByEmail(username)
+                .map(UserSecurityDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException("User was not found with email: " + username));
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) {
+        try {
+            return config.getAuthenticationManager();
+        } catch (Exception e) {
+            throw new IllegalStateException("Error trying to get AuthenticationManager from Spring Security", e);
+        }
     }
 
     @Bean
