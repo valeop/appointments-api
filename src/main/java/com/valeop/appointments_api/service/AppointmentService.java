@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.valeop.appointments_api.dto.appointment.AppointmentResponseDTO;
 import com.valeop.appointments_api.dto.appointment.CreateAppointmentDTO;
 import com.valeop.appointments_api.dto.appointment.UpdateAppointmentDTO;
+import com.valeop.appointments_api.model.DoctorService;
 
 @Service
 public interface AppointmentService {
@@ -19,4 +20,6 @@ public interface AppointmentService {
     AppointmentResponseDTO updateAppointment(UpdateAppointmentDTO updateDTO, Integer appointmentId);
 
     AppointmentResponseDTO deleteAppointment(Integer appointmentId);
+
+    void validatePermission(DoctorService doctorService, String username);
 }
