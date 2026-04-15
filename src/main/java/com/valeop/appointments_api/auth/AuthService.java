@@ -12,6 +12,7 @@ import com.valeop.appointments_api.exceptions.ResourceNotFoundException;
 import com.valeop.appointments_api.jwt.JwtService;
 import com.valeop.appointments_api.mapper.UserMapper;
 import com.valeop.appointments_api.model.User;
+import com.valeop.appointments_api.model.UserSecurityDetails;
 import com.valeop.appointments_api.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
@@ -38,24 +39,28 @@ public class AuthService {
         User user = userRepository.findByEmail(authRequest.email())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + authRequest.email()));
 
-        String token = jwtService.generateAccessToken(user);
+        UserSecurityDetails userDetails = new UserSecurityDetails(user);
+        String token = jwtService.generateAccessToken(userDetails);
 
         return new AuthResponse(token, "Bearer", jwtService.extractClaim(token, Claims::getExpiration),
-                user.getUsername(),
-                user.getRole().getRoleName());
+                userDetails.getUsername(),
+                userDetails.getAuthorities().toString());
     }
 
     public UserResponseDTO updatePassword(UpdatePasswordDTO updateDTO, Integer userId) {
         User userFound = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "User does not exist with ID #" + userId));
-        if (!passwordEncoder.matches(updateDTO.currentPassword(), userFound.getPassword())) {
+
+        UserSecurityDetails userDetails = new UserSecurityDetails(userFound);
+
+        if (!passwordEncoder.matches(updateDTO.currentPassword(), userDetails.getPassword())) {
             throw new BadRequestException("Invalid current password");
         }
         if (!updateDTO.newPassword().equals(updateDTO.confirmNewPassword())) {
             throw new BadRequestException("New password does not match with password confirmed");
         }
-        if (passwordEncoder.matches(updateDTO.newPassword(), userFound.getPassword())) {
+        if (passwordEncoder.matches(updateDTO.newPassword(), userDetails.getPassword())) {
             throw new BadRequestException("New password shouldn't be the same as current one");
         }
 
