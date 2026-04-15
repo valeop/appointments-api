@@ -294,6 +294,28 @@ Prepare your IDE to work with .env files or just set them up locally in your IDE
 Follow this link to access to Postman API endpoinds tests. You'll find some simple descriptions for each endpoint there:
 [Postman-Appointments-API-endpoints-link](https://www.postman.com/lunar-module-cosmologist-74614115/workspace/personal-projects/folder/33250817-3cde0ecb-5020-4eb4-b058-e4430f3621d5?action=share&creator=33250817)
 
-#### Roles permissions (In progress)
+#### Roles permissions
+- **`ROLE_PATIENT`** can only access to **Auth** endpoints and create general appointments (Dental, General or Ophthalmology only services) for themselves with the next body:
+  ```
+  {
+    "appointmentDateTime": " 2026-12-25T10:00",
+    "doctorService": {
+        "doctorServiceId": 5
+    }
+  }
+  ```
+- **`ROLE_DOCTOR`** can only access to **Auth** endpoints, create appointments related to all types of services, and look a their available services (GET all their appointments). The body to create a new appointment is:
+  ```
+  {
+    "appointmentDateTime": " 2026-12-25T10:00",
+    "user": {
+        "userId": 18
+    },
+    "doctorService": {
+        "doctorServiceId": 5
+    }
+  }
+  ```
+- **`ROLE_ADMIN`** can access to each and every one of the endpoints created. They can also manage users, persons, roles, and even blood types. They have all permissions needed.
 
 ### 5. Try the project deployed (In progress)
