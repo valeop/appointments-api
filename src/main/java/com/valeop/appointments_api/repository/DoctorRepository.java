@@ -7,10 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.valeop.appointments_api.model.Doctor;
+import com.valeop.appointments_api.model.User;
 
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
     List<Doctor> findAll();
 
     Optional<Doctor> findByDoctorId(Integer doctorId);
+
+    Optional<Doctor> findByUser(User user);
 }
