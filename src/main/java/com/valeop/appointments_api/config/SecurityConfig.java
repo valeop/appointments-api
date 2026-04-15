@@ -44,7 +44,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(http -> {
                     http.requestMatchers("/api/auth/login").permitAll();
                     http.requestMatchers(HttpMethod.PUT, "/api/auth/update-password/**").authenticated();
-                    http.requestMatchers("/api/persons/**", "/api/users/**", "/api/roles/**").hasRole("ADMIN");
+                    http.requestMatchers("/api/persons/**", "/api/users/**", "/api/roles/**", "/api/bloodtypes/**",
+                            "/api/doctors/**", "/api/genders/**", "/api/services/**",
+                            "/api/servicetypes/**", "/api/doctorservices/**").hasRole("ADMIN");
                     http.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
