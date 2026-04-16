@@ -295,16 +295,19 @@ Follow this link to access to Postman API endpoinds tests. You'll find some simp
 [Postman-Appointments-API-endpoints-link](https://www.postman.com/lunar-module-cosmologist-74614115/workspace/personal-projects/folder/33250817-3cde0ecb-5020-4eb4-b058-e4430f3621d5?action=share&creator=33250817)
 
 #### Roles permissions
-- **`ROLE_PATIENT`** can only access to **Auth** endpoints and create general appointments (Dental, General or Ophthalmology only services) for themselves with the next body:
+- **`ROLE_PATIENT`** can only access to **Auth** endpoints and create general appointments (Dental, General or Ophthalmology only services) for themselves. The body to create a new appointment:
   ```
   {
     "appointmentDateTime": " 2026-12-25T10:00",
+    "user": {
+        "userId": 21 // Make sure it is the userId related to your authentication as patient
+    },
     "doctorService": {
-        "doctorServiceId": 5
+        "doctorServiceId": 16
     }
   }
   ```
-- **`ROLE_DOCTOR`** can only access to **Auth** endpoints, create appointments related to all types of services, and look a their available services (GET all their appointments). The body to create a new appointment is:
+- **`ROLE_DOCTOR`** can only access to **Auth** endpoints, create appointments related to all types of services, and look a their available services (GET all their appointments). The body to create a new appointment:
   ```
   {
     "appointmentDateTime": " 2026-12-25T10:00",
