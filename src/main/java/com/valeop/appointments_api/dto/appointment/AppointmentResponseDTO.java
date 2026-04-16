@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public record AppointmentResponseDTO(
                 Integer appointmentId,
                 LocalDateTime appointmentDateTime,
-                String email,
+                String patient,
                 String doctor,
                 String service,
                 String serviceType) {
